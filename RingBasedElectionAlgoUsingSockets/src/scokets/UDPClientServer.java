@@ -9,7 +9,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-public class UDPClientServer extends Thread{
+public class UDPClientServer extends Thread {
 
     private final int currentPort;
     private final int nextPort;
@@ -81,17 +81,12 @@ public class UDPClientServer extends Thread{
                 messageToken = ringLogic.ringAlgorithm(this.currentNodeId, messageToken, nextNodeId);
 
                 if (messageToken == null) {
-                    break;
+                    //break;
                 }
                 else {
                     this.sendMessage(messageToken);
                 }
 
-                //System.out.println(" Request: " + new String(request.getData(), 0, request.getLength()));
-
-                /*DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(),
-                        request.getAddress(), request.getPort());
-                aSocket.send(reply);*/
             }
         } catch (SocketException e) {
             System.out.println(" Socket: " + e.getMessage());

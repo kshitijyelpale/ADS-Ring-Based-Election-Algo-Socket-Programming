@@ -1,8 +1,10 @@
 import TCP_UDP.UDPClient;
 import domain.Message;
 import scokets.UDPClientServer;
+import service.RingLogic;
 import utils.Utils;
 
+import java.io.*;
 import java.util.*;
 
 public class SocketRing {
@@ -10,7 +12,10 @@ public class SocketRing {
     public static void main(String[] args) throws InterruptedException {
         int port = 10000;
 
-        //List<UDPClientServer> nodes = new ArrayList<UDPClientServer>();
+        Set<Integer> set = new HashSet<>();
+        RingLogic ringLogic = new RingLogic();
+        ringLogic.setParticipatedNodeIds(set);
+
         Map<Integer, UDPClientServer> nodes = new HashMap<Integer, UDPClientServer>();
 
         Integer[] a = {1,2,3,4,5};
@@ -37,6 +42,16 @@ public class SocketRing {
         System.out.println("Election started by node: " + startingNode);
         Message messageToken = new Message(startingNode, Utils.ELECTION);
         nodes.get(startingNode).sendMessage(messageToken);
+
+        Thread.sleep(3000);
+
+        startingNode = random.nextInt(5) + 1;
+
+        if (!ringLogic.isParticipated(startingNode)) {
+            System.out.println("2nd Election started by node: " + startingNode);
+            messageToken = new Message(startingNode, Utils.ELECTION);
+            nodes.get(startingNode).sendMessage(messageToken);
+        }
 
         System.out.println("Main Thread Closed");
     }

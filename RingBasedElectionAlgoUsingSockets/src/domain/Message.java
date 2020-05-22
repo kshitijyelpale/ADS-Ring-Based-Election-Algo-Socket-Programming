@@ -10,8 +10,6 @@ public class Message implements Serializable {
 
     private byte status;
 
-    private Set participated = new HashSet();
-
     public Message() {}
 
     public Message(int nodeId, byte status) {
@@ -25,18 +23,6 @@ public class Message implements Serializable {
 
     public void setStatus(byte status) {
         this.status = status;
-    }
-
-    public void addInParticipated(int nodeId) {
-        participated.add(nodeId);
-    }
-
-    public void deleteFromParticipated(int nodeId) {
-        participated.remove(nodeId);
-    }
-
-    public boolean isParticipated(int nodeId) {
-        return participated.contains(nodeId);
     }
 
     public int getNodeId() {
