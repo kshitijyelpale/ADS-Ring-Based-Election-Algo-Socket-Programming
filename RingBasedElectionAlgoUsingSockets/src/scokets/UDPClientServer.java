@@ -33,18 +33,16 @@ public class UDPClientServer extends Thread{
         receiveMessage();
     }
 
-    public void sendMessage(int nodeId, byte status) {
+    public void sendMessage(Message messageToken) {
         try {
             DatagramSocket aSocket = new DatagramSocket();
 
             InetAddress aHost = InetAddress.getByName("localhost");
 
-            Message mObj = new Message(nodeId, status);
-
             // Serialization...
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(byteArrayOutputStream);
-            oos.writeObject(mObj);
+            oos.writeObject(messageToken);
 
             DatagramPacket request = new DatagramPacket(byteArrayOutputStream.toByteArray(),
                     byteArrayOutputStream.toByteArray().length, aHost, this.nextPort);
@@ -60,6 +58,9 @@ public class UDPClientServer extends Thread{
 
     public void receiveMessage() {
         try {
+
+            System.out.println("Server started for port:" + this.currentPort);
+
             DatagramSocket aSocket = new DatagramSocket(this.currentPort);
             byte[] buffer = new byte[1000];
             while (true) {
@@ -77,7 +78,14 @@ public class UDPClientServer extends Thread{
                     return;
                 }
 
-                ringLogic.ringAlgorithm(this.currentNodeId, messageToken);
+                messageToken = ringLogic.ringAlgorithm(this.currentNodeId, messageToken, nextNodeId);
+
+                if (messageToken == null) {
+                    break;
+                }
+                else {
+                    this.sendMessage(messageToken);
+                }
 
                 //System.out.println(" Request: " + new String(request.getData(), 0, request.getLength()));
 
